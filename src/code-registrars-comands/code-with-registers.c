@@ -52,13 +52,13 @@ float h;
 float t;
 
 const uint8_t flameCharacter[8] = {
+    0b01000,
     0b00100,
-    0b01110,
-    0b01110,
+    0b01100,
+    0b10101,
+    0b11101,
     0b11111,
     0b01110,
-    0b01110,
-    0b00100,
     0b00000
 };
 
@@ -72,16 +72,6 @@ const uint8_t dropCharacter[8] = {
     0b01110,
     0b00000
 };
-
-void createFlameCharacter() {
-    // Define o endereço da memória de caracteres personalizados (de 0 a 7)
-    cmd_LCD(0x40 | (0 << 3), 0); // Endereço 0, altere para outros endereços se necessário
-
-    // Envie os padrões de pixels para o controlador do LCD
-    for (int i = 0; i < 8; i++) {
-        cmd_LCD(flameCharacter[i], 1);
-    }
-}
 
 void loadCustomCharacter(uint8_t location, const uint8_t *character) {
     // Define o endereço da memória de caracteres personalizados (de 0 a 7)
@@ -296,6 +286,7 @@ void start() {
   cmd_LCD(0x80, 0); // inicializa cursor na primeira posição a esquerda - 1a linha 
 
   loadCustomCharacter(0, dropCharacter);
+  loadCustomCharacter(1, flameCharacter);
 }
 
 // Exibe uma string no LCD
@@ -408,7 +399,7 @@ void screen_1(){
       posicionar_cursor(2, 13);
       show_LCD("C");
       posicionar_cursor(2, 16);
-      cmd_LCD(0x40, 1);
+      cmd_LCD(0x01, 1);
       alert_led();
     }else if(potValue > 1024/2){
       PORTH |= (1 << BUZZER);
@@ -417,7 +408,9 @@ void screen_1(){
       posicionar_cursor(1, 5);
       show_LCD("ALERTA!!");
       posicionar_cursor(2, 6);
-      show_LCD("Fogo!!");
+      show_LCD("Fogo!");
+      posicionar_cursor(2,11);
+      cmd_LCD(0x01, 1);
       _delay_ms(2000);
       cmd_LCD(0x01, 0);
     }else{
